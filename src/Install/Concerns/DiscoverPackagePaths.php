@@ -31,7 +31,7 @@ trait DiscoverPackagePaths
      * @var array<int, Packages>
      */
     protected array $excludedPackages = [
-        Packages::BOOST,
+        'boost', //Packages::BOOST,
         Packages::SAIL,
     ];
 
