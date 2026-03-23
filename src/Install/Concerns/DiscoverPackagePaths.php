@@ -105,7 +105,12 @@ trait DiscoverPackagePaths
             return null;
         }
 
-        $path = implode(DIRECTORY_SEPARATOR, [$package->path(), 'resources', 'boost', $subpath]);
+        // stop error about ->path not existing
+        if(method_exists($package, 'path') === false) {
+            $path = implode(DIRECTORY_SEPARATOR, [base_path('vendor'), $package->rawName(), 'resources', 'boost', $subpath]);
+        } else {
+            $path = implode(DIRECTORY_SEPARATOR, [$package->path(), 'resources', 'boost', $subpath]);
+        }
 
         return is_dir($path) ? $path : null;
     }
