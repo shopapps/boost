@@ -480,7 +480,7 @@ test('includes wayfinder guidelines with inertia integration when both packages 
     expect($guidelines)
         ->toContain('=== wayfinder/core rules ===')
         ->toContain('# Laravel Wayfinder')
-        ->toContain('Inertia: Use `.form()` with `<Form>` component');
+        ->toContain('Use Wayfinder to generate TypeScript functions for Laravel routes');
 });
 
 test('includes wayfinder guidelines with inertia vue integration', function (): void {
@@ -516,7 +516,7 @@ test('includes wayfinder guidelines with inertia vue integration', function (): 
     expect($guidelines)
         ->toContain('=== wayfinder/core rules ===')
         ->toContain('# Laravel Wayfinder')
-        ->toContain('Inertia: Use `.form()` with `<Form>` component');
+        ->toContain('Use Wayfinder to generate TypeScript functions for Laravel routes');
 });
 
 test('includes wayfinder guidelines with inertia svelte integration', function (): void {
@@ -552,7 +552,7 @@ test('includes wayfinder guidelines with inertia svelte integration', function (
     expect($guidelines)
         ->toContain('=== wayfinder/core rules ===')
         ->toContain('# Laravel Wayfinder')
-        ->toContain('Inertia: Use `.form()` with `<Form>` component');
+        ->toContain('Use Wayfinder to generate TypeScript functions for Laravel routes');
 });
 
 test('includes wayfinder guidelines without inertia integration when inertia is not present', function (): void {
@@ -586,9 +586,7 @@ test('includes wayfinder guidelines without inertia integration when inertia is 
     expect($guidelines)
         ->toContain('=== wayfinder/core rules ===')
         ->toContain('# Laravel Wayfinder')
-        ->toContain('Invokable Controllers')
-        ->toContain('Parameter Binding')
-        ->not->toContain('Inertia:');
+        ->toContain('Use Wayfinder to generate TypeScript functions for Laravel routes');
 });
 
 test('the guidelines are in correct order', function (): void {
@@ -901,6 +899,50 @@ test('includes Skills Activation section when skills are enabled and skills exis
     expect($guidelines)
         ->toContain('## Skills Activation')
         ->toContain('This project has domain-specific skills available');
+});
+
+test('excludes MCP Tools and Searching Documentation sections when hasMcp is false', function (): void {
+    $packages = new PackageCollection([
+        new Package(Packages::LARAVEL, 'laravel/framework', '11.0.0'),
+    ]);
+
+    $this->roster->shouldReceive('packages')->andReturn($packages);
+
+    $config = new GuidelineConfig;
+    $config->hasMcp = false;
+
+    $guidelines = $this->composer
+        ->config($config)
+        ->compose();
+
+    expect($guidelines)
+        ->not->toContain('## Tools')
+        ->not->toContain('database-query')
+        ->not->toContain('database-schema')
+        ->not->toContain('search-docs')
+        ->not->toContain('## Searching Documentation');
+});
+
+test('includes MCP Tools and Searching Documentation sections when hasMcp is true', function (): void {
+    $packages = new PackageCollection([
+        new Package(Packages::LARAVEL, 'laravel/framework', '11.0.0'),
+    ]);
+
+    $this->roster->shouldReceive('packages')->andReturn($packages);
+
+    $config = new GuidelineConfig;
+    $config->hasMcp = true;
+
+    $guidelines = $this->composer
+        ->config($config)
+        ->compose();
+
+    expect($guidelines)
+        ->toContain('## Tools')
+        ->toContain('database-query')
+        ->toContain('database-schema')
+        ->toContain('search-docs')
+        ->toContain('## Searching Documentation');
 });
 
 test('loads vendor core guideline when available', function (): void {
